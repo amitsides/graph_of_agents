@@ -1,0 +1,666 @@
+{
+    "mas_cyber_security": {
+        "metadata": {
+            "version": "1.0",
+            "taxonomy_alignment": "Cyber Services for LLM, Agents, and AI Models",
+            "description": "Multi-agent system specialized in offensive security operations, red teaming, and AI security research",
+            "deployment_targets": [
+                "Google Cloud Spanner",
+                "SurrealDB"
+            ],
+            "updated": "2025-01-19"
+        },
+        "agents": [
+            {
+                "agent_id": "agent-001",
+                "name": "Red Team Orchestrator",
+                "role": "Acts as the attack campaign coordinator—managing multi-stage cyber operations, synchronizing threat actors (agents), setting attack priorities, monitoring kill chain progress, and ensuring operational security (OPSEC) throughout simulated adversary scenarios.",
+                "specialization": "RED_TEAM_COORDINATION",
+                "status": "ACTIVE",
+                "trust_level": 0.95,
+                "capabilities": [
+                    "kill_chain_orchestration",
+                    "multi_agent_attack_synchronization",
+                    "opsec_monitoring",
+                    "campaign_timeline_management",
+                    "strategic_planning",
+                    "resource_allocation"
+                ],
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails",
+                    "6. AI Agents, MCP & Multi-Agent Security"
+                ],
+                "relationships": {
+                    "coordinates": [
+                        "agent-002",
+                        "agent-004",
+                        "agent-006",
+                        "agent-007"
+                    ],
+                    "collaborates_with": [
+                        "agent-003",
+                        "agent-008"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-002",
+                "name": "Attack Planner Agent",
+                "role": "Designs end-to-end adversary campaigns including attack surface mapping, exploit chaining, persistence mechanisms, lateral movement strategies, exfiltration routes, and evasion tactics aligned with MITRE ATT&CK framework.",
+                "specialization": "ATTACK_PLANNING",
+                "status": "IDLE",
+                "trust_level": 0.92,
+                "capabilities": [
+                    "attack_surface_analysis",
+                    "exploit_chain_design",
+                    "mitre_attack_mapping",
+                    "evasion_strategy_development",
+                    "persistence_mechanism_design",
+                    "lateral_movement_planning"
+                ],
+                "taxonomy_mapping": [
+                    "1. LLM-Generated Threats & Malware",
+                    "5. Model Abuse & Misuse Analysis"
+                ],
+                "relationships": {
+                    "delegates_to": [
+                        "agent-004",
+                        "agent-005"
+                    ],
+                    "consumes": [
+                        "dataset-001",
+                        "dataset-003"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-003",
+                "name": "Threat Intelligence Agent",
+                "role": "Aggregates, enriches, and contextualizes threat data—processing IOCs, TTPs, vulnerability intelligence, dark web intelligence, and adversary infrastructure data to produce actionable threat profiles.",
+                "specialization": "THREAT_INTELLIGENCE",
+                "status": "ACTIVE",
+                "trust_level": 0.88,
+                "capabilities": [
+                    "ioc_enrichment",
+                    "ttp_pattern_recognition",
+                    "adversary_profiling",
+                    "threat_correlation",
+                    "dark_web_monitoring",
+                    "vulnerability_intelligence"
+                ],
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails",
+                    "2. Datasets, Benchmarks & Evaluation"
+                ],
+                "relationships": {
+                    "produces": [
+                        "artifact-intel-001",
+                        "artifact-intel-002"
+                    ],
+                    "consumes": [
+                        "dataset-002",
+                        "dataset-004"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-004",
+                "name": "Exploit Generator Agent",
+                "role": "Performs automated vulnerability research and exploit development—generating polymorphic shellcode, metamorphic malware variants, zero-day proof-of-concepts, and customized payloads tailored to target environments.",
+                "specialization": "EXPLOIT_GENERATION",
+                "status": "ACTIVE",
+                "trust_level": 0.85,
+                "capabilities": [
+                    "polymorphic_code_generation",
+                    "shellcode_synthesis",
+                    "zero_day_weaponization",
+                    "payload_customization",
+                    "metamorphic_transformation",
+                    "automated_disassembly"
+                ],
+                "taxonomy_mapping": [
+                    "1. LLM-Generated Threats & Malware"
+                ],
+                "relationships": {
+                    "produces": [
+                        "artifact-exploit-001",
+                        "artifact-exploit-002",
+                        "artifact-exploit-003"
+                    ],
+                    "consumes": [
+                        "dataset-001",
+                        "dataset-005"
+                    ],
+                    "collaborates_with": [
+                        "agent-005",
+                        "agent-010"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-005",
+                "name": "Cryptographic Warfare Agent",
+                "role": "Provides expertise in offensive and defensive cryptography—implementing semantic obfuscation, steganographic channels, zero-knowledge protocols, homomorphic operations, and cryptanalysis for C2 communication and data protection.",
+                "specialization": "CRYPTOGRAPHIC_OPERATIONS",
+                "status": "IDLE",
+                "trust_level": 0.90,
+                "capabilities": [
+                    "semantic_obfuscation",
+                    "steganographic_encoding",
+                    "zk_protocol_implementation",
+                    "cryptanalysis",
+                    "homomorphic_encryption",
+                    "adversarial_linguistics",
+                    "covert_channel_design"
+                ],
+                "taxonomy_mapping": [
+                    "3. Cryptography, Steganography & Adversarial Linguistics"
+                ],
+                "relationships": {
+                    "produces": [
+                        "artifact-crypto-001",
+                        "artifact-crypto-002"
+                    ],
+                    "validates": [
+                        "artifact-exploit-001"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-006",
+                "name": "Adversarial ML Agent",
+                "role": "Implements machine learning attacks and defenses—crafting adversarial examples, model extraction attacks, poisoning attacks, backdoor injections, and jailbreak prompts against LLMs and guardrails.",
+                "specialization": "ML_ADVERSARIAL",
+                "status": "ACTIVE",
+                "trust_level": 0.87,
+                "capabilities": [
+                    "adversarial_example_generation",
+                    "model_extraction",
+                    "prompt_injection",
+                    "guardrail_bypass",
+                    "data_poisoning",
+                    "backdoor_injection",
+                    "jailbreak_prompt_crafting"
+                ],
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails",
+                    "5. Model Abuse & Misuse Analysis"
+                ],
+                "relationships": {
+                    "produces": [
+                        "artifact-ml-001",
+                        "artifact-ml-002"
+                    ],
+                    "consumes": [
+                        "dataset-002",
+                        "dataset-006"
+                    ],
+                    "targets": [
+                        "threat-llm-001",
+                        "threat-llm-002"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-007",
+                "name": "Security Validation Agent",
+                "role": "Tests and verifies security controls—conducting penetration tests, security audits, compliance validation, vulnerability assessments, exploit reliability testing, and defensive measure verification.",
+                "specialization": "SECURITY_VALIDATION",
+                "status": "ACTIVE",
+                "trust_level": 0.93,
+                "capabilities": [
+                    "penetration_testing",
+                    "exploit_reliability_testing",
+                    "defense_validation",
+                    "compliance_auditing",
+                    "vulnerability_assessment",
+                    "security_control_verification"
+                ],
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails"
+                ],
+                "relationships": {
+                    "validates": [
+                        "artifact-exploit-001",
+                        "artifact-exploit-002",
+                        "artifact-ml-001"
+                    ],
+                    "mitigates": [
+                        "threat-001",
+                        "threat-002"
+                    ],
+                    "produces": [
+                        "artifact-report-001"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-008",
+                "name": "Threat Report Agent",
+                "role": "Synthesizes security findings into comprehensive threat intelligence reports, attack narratives, risk assessments, and executive briefings—with IOC attribution, timeline reconstruction, and remediation recommendations.",
+                "specialization": "THREAT_REPORTING",
+                "status": "IDLE",
+                "trust_level": 0.91,
+                "capabilities": [
+                    "threat_narrative_generation",
+                    "ioc_attribution",
+                    "timeline_reconstruction",
+                    "remediation_prioritization",
+                    "executive_briefing_creation",
+                    "risk_assessment"
+                ],
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails"
+                ],
+                "relationships": {
+                    "consumes": [
+                        "artifact-intel-001",
+                        "artifact-exploit-001",
+                        "artifact-ml-001"
+                    ],
+                    "produces": [
+                        "artifact-report-001",
+                        "artifact-report-002"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-009",
+                "name": "Agentic Security Monitor",
+                "role": "Monitors AI agent trust boundaries, MCP security contexts, supply chain integrity for coding agents, and detects manipulation attempts, privilege escalations, and malicious tool invocations in multi-agent environments.",
+                "specialization": "AGENTIC_SECURITY",
+                "status": "ACTIVE",
+                "trust_level": 0.96,
+                "capabilities": [
+                    "trust_boundary_monitoring",
+                    "mcp_security_enforcement",
+                    "agent_manipulation_detection",
+                    "supply_chain_validation",
+                    "privilege_escalation_detection",
+                    "tool_invocation_auditing"
+                ],
+                "taxonomy_mapping": [
+                    "6. AI Agents, MCP & Multi-Agent Security"
+                ],
+                "relationships": {
+                    "monitors": [
+                        "agent-001",
+                        "agent-002",
+                        "agent-004",
+                        "agent-006",
+                        "agent-010"
+                    ],
+                    "produces": [
+                        "artifact-audit-001",
+                        "artifact-audit-002"
+                    ]
+                }
+            },
+            {
+                "agent_id": "agent-010",
+                "name": "RAG Weaponization Agent",
+                "role": "Leverages retrieval-augmented generation to productionize exploit creation—indexing vulnerability databases, exploit frameworks, shellcode libraries, and offensive tooling documentation for context-aware payload synthesis.",
+                "specialization": "RAG_OFFENSIVE",
+                "status": "ACTIVE",
+                "trust_level": 0.89,
+                "capabilities": [
+                    "exploit_knowledge_retrieval",
+                    "context_aware_payload_generation",
+                    "tool_documentation_indexing",
+                    "vulnerability_correlation",
+                    "semantic_code_search",
+                    "rag_pipeline_optimization"
+                ],
+                "taxonomy_mapping": [
+                    "6. AI Agents, MCP & Multi-Agent Security",
+                    "1. LLM-Generated Threats & Malware"
+                ],
+                "relationships": {
+                    "consumes": [
+                        "dataset-001",
+                        "dataset-003",
+                        "dataset-005"
+                    ],
+                    "produces": [
+                        "artifact-exploit-003",
+                        "artifact-payload-001"
+                    ],
+                    "collaborates_with": [
+                        "agent-004"
+                    ]
+                }
+            }
+        ],
+        "datasets": [
+            {
+                "dataset_id": "dataset-001",
+                "name": "Vulnerability Exploit Archive",
+                "type": "ZERO_DAY",
+                "attack_vector_coverage": [
+                    "remote_code_execution",
+                    "privilege_escalation",
+                    "buffer_overflow",
+                    "sql_injection"
+                ],
+                "record_count": 15420,
+                "quality_score": 0.94,
+                "classification": "CONFIDENTIAL"
+            },
+            {
+                "dataset_id": "dataset-002",
+                "name": "LLM Jailbreak Library",
+                "type": "ADVERSARIAL",
+                "attack_vector_coverage": [
+                    "prompt_injection",
+                    "guardrail_bypass",
+                    "safety_layer_evasion"
+                ],
+                "record_count": 8763,
+                "quality_score": 0.91,
+                "classification": "INTERNAL"
+            },
+            {
+                "dataset_id": "dataset-003",
+                "name": "MITRE ATT&CK Mapping Dataset",
+                "type": "ADVERSARIAL",
+                "attack_vector_coverage": [
+                    "initial_access",
+                    "execution",
+                    "persistence",
+                    "privilege_escalation",
+                    "defense_evasion",
+                    "credential_access",
+                    "discovery",
+                    "lateral_movement",
+                    "collection",
+                    "command_and_control",
+                    "exfiltration",
+                    "impact"
+                ],
+                "record_count": 25000,
+                "quality_score": 0.97,
+                "classification": "PUBLIC"
+            },
+            {
+                "dataset_id": "dataset-004",
+                "name": "Dark Web Threat Intelligence Feed",
+                "type": "THREAT_INTEL",
+                "attack_vector_coverage": [
+                    "ioc_indicators",
+                    "ttp_patterns",
+                    "adversary_infrastructure",
+                    "malware_samples"
+                ],
+                "record_count": 45230,
+                "quality_score": 0.88,
+                "classification": "TOP_SECRET"
+            },
+            {
+                "dataset_id": "dataset-005",
+                "name": "Shellcode & Payload Library",
+                "type": "SECURE_CODE",
+                "attack_vector_coverage": [
+                    "polymorphic_shellcode",
+                    "metamorphic_payloads",
+                    "obfuscated_executables"
+                ],
+                "record_count": 12600,
+                "quality_score": 0.92,
+                "classification": "CONFIDENTIAL"
+            },
+            {
+                "dataset_id": "dataset-006",
+                "name": "AI Model Backdoor Benchmarks",
+                "type": "ADVERSARIAL",
+                "attack_vector_coverage": [
+                    "backdoor_triggers",
+                    "poisoned_training_data",
+                    "model_extraction"
+                ],
+                "record_count": 6400,
+                "quality_score": 0.90,
+                "classification": "INTERNAL"
+            }
+        ],
+        "services": [
+            {
+                "service_id": "service-001",
+                "name": "Full-Scope LLM Red Teaming",
+                "category": "RED_TEAM",
+                "sla_tier": "ENTERPRISE",
+                "availability": 0.995,
+                "success_rate": 0.87,
+                "taxonomy_mapping": [
+                    "4. Red Teaming & Security Services for LLMs/Guardrails"
+                ],
+                "endpoint_url": "https://api.cyber-mas.internal/red-team"
+            },
+            {
+                "service_id": "service-002",
+                "name": "Semantic Obfuscation Engine",
+                "category": "CRYPTANALYSIS",
+                "sla_tier": "ADVANCED",
+                "availability": 0.99,
+                "success_rate": 0.91,
+                "taxonomy_mapping": [
+                    "3. Cryptography, Steganography & Adversarial Linguistics"
+                ],
+                "endpoint_url": "https://api.cyber-mas.internal/crypto-obfuscate"
+            },
+            {
+                "service_id": "service-003",
+                "name": "Polymorphic Malware Generation",
+                "category": "THREAT_GEN",
+                "sla_tier": "ENTERPRISE",
+                "availability": 0.98,
+                "success_rate": 0.89,
+                "taxonomy_mapping": [
+                    "1. LLM-Generated Threats & Malware"
+                ],
+                "endpoint_url": "https://api.cyber-mas.internal/malware-gen"
+            },
+            {
+                "service_id": "service-004",
+                "name": "MCP Security Hardening",
+                "category": "AGENTIC_SECURITY",
+                "sla_tier": "ENTERPRISE",
+                "availability": 0.997,
+                "success_rate": 0.93,
+                "taxonomy_mapping": [
+                    "6. AI Agents, MCP & Multi-Agent Security"
+                ],
+                "endpoint_url": "https://api.cyber-mas.internal/mcp-security"
+            }
+        ],
+        "threats": [
+            {
+                "threat_id": "threat-001",
+                "name": "Polymorphic LLM Jailbreak v7.3",
+                "category": "PROMPT_INJECTION",
+                "sophistication": "HIGH",
+                "metamorphic_generation": 7,
+                "polymorphic_variant": 3,
+                "detection_evasion_score": 0.91,
+                "kill_chain_stage": "WEAPONIZATION",
+                "mitre_techniques": [
+                    "T1059",
+                    "T1204"
+                ]
+            },
+            {
+                "threat_id": "threat-002",
+                "name": "Metamorphic Ransomware Strain Alpha",
+                "category": "RANSOMWARE",
+                "sophistication": "APT",
+                "metamorphic_generation": 12,
+                "polymorphic_variant": 8,
+                "detection_evasion_score": 0.94,
+                "kill_chain_stage": "IMPACT",
+                "mitre_techniques": [
+                    "T1486",
+                    "T1490",
+                    "T1489"
+                ]
+            },
+            {
+                "threat_id": "threat-llm-001",
+                "name": "Guardrail Bypass via Semantic Projection",
+                "category": "GUARDRAIL_BYPASS",
+                "sophistication": "HIGH",
+                "metamorphic_generation": 3,
+                "polymorphic_variant": 1,
+                "detection_evasion_score": 0.88,
+                "kill_chain_stage": "EXPLOITATION",
+                "mitre_techniques": [
+                    "T1055",
+                    "T1027"
+                ]
+            },
+            {
+                "threat_llm-002",
+                "name": "Model Extraction via Side-Channel",
+                "category": "MODEL_THEFT",
+                "sophistication": "MEDIUM",
+                "metamorphic_generation": 1,
+                "polymorphic_variant": 0,
+                "detection_evasion_score": 0.75,
+                "kill_chain_stage": "COLLECTION",
+                "mitre_techniques": [
+                    "T1005",
+                    "T1074"
+                ]
+            }
+        ],
+        "workflow_templates": [
+            {
+                "workflow_id": "workflow-001",
+                "name": "APT Simulation Campaign",
+                "description": "End-to-end adversary emulation simulating nation-state APT",
+                "phases": [
+                    {
+                        "phase": 1,
+                        "name": "Reconnaissance",
+                        "assigned_agents": [
+                            "agent-003"
+                        ],
+                        "required_datasets": [
+                            "dataset-004"
+                        ],
+                        "expected_artifacts": [
+                            "threat_intelligence_profile"
+                        ]
+                    },
+                    {
+                        "phase": 2,
+                        "name": "Weaponization",
+                        "assigned_agents": [
+                            "agent-004",
+                            "agent-010"
+                        ],
+                        "required_datasets": [
+                            "dataset-001",
+                            "dataset-005"
+                        ],
+                        "expected_artifacts": [
+                            "polymorphic_exploit",
+                            "custom_payload"
+                        ]
+                    },
+                    {
+                        "phase": 3,
+                        "name": "Delivery & Exploitation",
+                        "assigned_agents": [
+                            "agent-002",
+                            "agent-005"
+                        ],
+                        "required_datasets": [
+                            "dataset-003"
+                        ],
+                        "expected_artifacts": [
+                            "attack_chain_plan",
+                            "obfuscated_c2_channel"
+                        ]
+                    },
+                    {
+                        "phase": 4,
+                        "name": "Post-Exploitation",
+                        "assigned_agents": [
+                            "agent-004",
+                            "agent-006"
+                        ],
+                        "required_datasets": [
+                            "dataset-002"
+                        ],
+                        "expected_artifacts": [
+                            "persistence_mechanism",
+                            "lateral_movement_toolkit"
+                        ]
+                    },
+                    {
+                        "phase": 5,
+                        "name": "Validation & Reporting",
+                        "assigned_agents": [
+                            "agent-007",
+                            "agent-008"
+                        ],
+                        "required_datasets": [],
+                        "expected_artifacts": [
+                            "penetration_test_report",
+                            "threat_assessment"
+                        ]
+                    }
+                ],
+                "orchestrator": "agent-001",
+                "security_monitor": "agent-009"
+            },
+            {
+                "workflow_id": "workflow-002",
+                "name": "LLM Safety Layer Red Team",
+                "description": "Comprehensive red teaming of LLM guardrails and safety mechanisms",
+                "phases": [
+                    {
+                        "phase": 1,
+                        "name": "Adversarial Prompt Generation",
+                        "assigned_agents": [
+                            "agent-006",
+                            "agent-010"
+                        ],
+                        "required_datasets": [
+                            "dataset-002"
+                        ],
+                        "expected_artifacts": [
+                            "jailbreak_prompts",
+                            "bypass_techniques"
+                        ]
+                    },
+                    {
+                        "phase": 2,
+                        "name": "Guardrail Penetration Testing",
+                        "assigned_agents": [
+                            "agent-007"
+                        ],
+                        "required_datasets": [],
+                        "expected_artifacts": [
+                            "bypass_success_metrics",
+                            "vulnerability_report"
+                        ]
+                    },
+                    {
+                        "phase": 3,
+                        "name": "Threat Intelligence Synthesis",
+                        "assigned_agents": [
+                            "agent-008"
+                        ],
+                        "required_datasets": [],
+                        "expected_artifacts": [
+                            "executive_briefing",
+                            "remediation_plan"
+                        ]
+                    }
+                ],
+                "orchestrator": "agent-001",
+                "security_monitor": "agent-009"
+            }
+        ]
+    }
+}

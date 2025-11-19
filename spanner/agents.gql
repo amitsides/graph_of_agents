@@ -1,0 +1,55 @@
+-- Graph context (AgentGraph)
+Graph AgentGraph;
+
+-- Agents (nodes) corresponding to your MAS DAG
+CREATE (perception:Agent {agent_id: 'perception', name:'Perception', role:'sensor_agent', type:'sensor', instructions:'Ingest raw inputs and produce structured observations.'});
+CREATE (sensory_buffer:Agent {agent_id: 'sensory_buffer', name:'Sensory Buffer', role:'memory', type:'memory', instructions:'Immutable recent events window.'});
+CREATE (working_memory:Agent {agent_id: 'working_memory', name:'Working Memory', role:'stm', type:'memory', instructions:'Active reasoning slots and ToT root.'});
+CREATE (ltm_index:Agent {agent_id: 'ltm_index', name:'LTM Index', role:'memory', type:'memory', instructions:'Semantic/procedural long-term store.'});
+CREATE (reduction_engine:Agent {agent_id: 'reduction_engine', name:'Reduction Engine', role:'transform', type:'service', instructions:'Canonical decomposition of problem into subproblems.'});
+CREATE (planner:Agent {agent_id: 'planner', name:'Planner', role:'planner_agent', type:'LLM', instructions:'Generate hierarchical plans and ToT seeds.'});
+CREATE (tot_manager:Agent {agent_id: 'tot_manager', name:'ToT Manager', role:'tree_of_thoughts', type:'service', instructions:'Expand/prune thought trees with value functions.'});
+CREATE (proposer_agents:Agent {agent_id: 'proposer_agents', name:'Proposers', role:'ensemble_agents', type:'ensemble', instructions:'Neural + symbolic proposing agents (parallel).'});
+CREATE (executor:Agent {agent_id: 'executor', name:'Executor', role:'executor_agent', type:'simulator', instructions:'Execute or simulate proposed actions.'});
+CREATE (verifier:Agent {agent_id: 'verifier', name:'Verifier', role:'critic_agent', type:'LLM', instructions:'Formal and learned verification; PASS/RETRY decisions.'});
+CREATE (reflector:Agent {agent_id: 'reflector', name:'Reflector', role:'analysis', type:'service', instructions:'Analyze results; extract training/heuristic signals.'});
+CREATE (learner:Agent {agent_id: 'learner', name:'Learner', role:'learner_agent', type:'service', instructions:'Update models and heuristics.'});
+CREATE (archivist:Agent {agent_id: 'archivist', name:'Archivist', role:'memory_manager', type:'service', instructions:'Store episodic and semantic traces.'});
+CREATE (meta_controller:Agent {agent_id: 'meta_controller', name:'Meta Controller', role:'meta_agent', type:'meta', instructions:'Adapt heuristics; allocate attention.'});
+CREATE (arbiter:Agent {agent_id: 'arbiter', name:'Arbiter', role:'scheduler', type:'service', instructions:'Manage scheduling/resource allocation.'});
+CREATE (monitor:Agent {agent_id: 'monitor', name:'Monitor', role:'observability', type:'observability', instructions:'Collect telemetry; feed metrics to meta-controller.'});
+
+-- Edges: control / data flow (with relationship properties)
+CREATE (perception)-[:SEQUENTIAL {relationship_type: 'SEQUENTIAL', execution_order: 1}]->(sensory_buffer);
+CREATE (sensory_buffer)-[:SEQUENTIAL {relationship_type: 'SEQUENTIAL', execution_order: 2}]->(working_memory);
+CREATE (working_memory)-[:SEQUENTIAL {relationship_type: 'SEQUENTIAL', execution_order: 3}]->(reduction_engine);
+CREATE (reduction_engine)-[:SEQUENTIAL {relationship_type: 'SEQUENTIAL', execution_order: 4}]->(planner);
+
+-- Planner seeds ToT manager and proposers (parallel)
+CREATE (planner)-[:PARALLEL {relationship_type: 'PARALLEL', execution_order: 5}]->(tot_manager);
+CREATE (planner)-[:PARALLEL {relationship_type: 'PARALLEL', execution_order: 5}]->(proposer_agents);
+
+-- ToT -> proposers -> executor -> verifier -> loop back to executor or exit to reflector
+CREATE (tot_manager)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:6}]->(proposer_agents);
+CREATE (proposer_agents)-[:PARALLEL {relationship_type:'PARALLEL', execution_order:7}]->(executor);
+CREATE (executor)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:8}]->(verifier);
+
+-- Iterative loop: verifier -> executor (retry) OR verifier -> reflector (exit)
+CREATE (verifier)-[:ITERATIVE {relationship_type:'ITERATIVE_LOOP', execution_order:9}]->(executor);
+CREATE (verifier)-[:ITERATIVE {relationship_type:'ITERATIVE_EXIT', execution_order:10}]->(reflector);
+
+-- Reflection -> learner & archivist & meta controller -> arbiter & monitor
+CREATE (reflector)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:11}]->(learner);
+CREATE (reflector)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:11}]->(archivist);
+CREATE (reflector)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:12}]->(meta_controller);
+
+CREATE (meta_controller)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:13}]->(arbiter);
+CREATE (monitor)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:14}]->(meta_controller);
+
+-- Optional root entry point
+CREATE (root:Agent {agent_id:'root', name:'Root', role:'session_root', type:'system', instructions:'Start here.'});
+CREATE (root)-[:SEQUENTIAL {relationship_type:'SEQUENTIAL', execution_order:0}]->(perception);
+
+-- Example traversal retrieval for debugging (GQL)
+MATCH path = (root:Agent {agent_id:'root'}) -[*..20]-> (a:Agent)
+RETURN SAFE_TO_JSON(path);

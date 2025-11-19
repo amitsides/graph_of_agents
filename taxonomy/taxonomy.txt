@@ -1,0 +1,81 @@
+Select Cyber Services for LLM, Agents, and AI Models 
+
+1. LLM-Generated Threats & Malware
+
+Scalable Metamorphic & Polymorphic Malware Generation
+
+Scalable Shellcode and Automated Disassembly
+
+Malicious Payload Design (Viruses, Worms, Trojans, Ransomware)
+
+Data Exfiltration Exploits
+
+Spyware, Rootkits, Keyloggers, Backdoors, Botnets, Cryptominers
+
+Ransomware and Extortion-Chain 
+2. Datasets, Benchmarks & Evaluation
+
+Secure Code Datasets for Model Training and Evaluation
+
+Adversarial Zero-Day Benchmarks
+
+Zero-Day Jailbreak Libraries
+
+Remediation and Hardening Datasets
+
+Custom Data Curation and Creation for Security Use Cases
+
+Datasets by Attack, Attack Vector, Attack Surface, Tactics, etc. 
+3. Cryptography, Steganography & Adversarial Linguistics
+
+Linguistic Steganography for Hidden-Channel Analysis
+
+Zero-Knowledge and Cryptographic Protocol-Aware Prompting
+
+Homomorphic Encryption-Aligned Workflows and Architectures
+
+Semantic Obfuscation, Adversarial Linguistics, and Semantic Projection
+
+Formal Isomorphism Analysis Between Natural Language and Code/Payloads
+4. Red Teaming & Security Services for LLMs/Guardrails
+
+Full-Scope Red Teaming of LLMs, Guardrails, and Safety Layers
+
+Penetration Testing Tailored to LLM Pipelines and Tools
+
+Semi-Automated Red Teaming Frameworks and Harnesses
+
+Kill-Chain Analysis for Model Abuse and AI-Driven Attack Paths
+
+Threat Intelligence Reporting for LLM Ecosystems
+
+Workshops for Security, Safety, and Red-Teaming Teams
+
+Joint Research Programs and Joint Threat-Monitoring Initiatives
+
+Open-Source Security Tooling and Code Contributions
+5. Model Abuse & Misuse Analysis
+
+Model Abuse Scenario Design and Stress Testing
+
+Guardrail Bypass and Misuse Pattern Mapping
+
+End-to-End Kill Chain Modeling for AI-Enabled Operations
+6. AI Agents, MCP & Multi-Agent Security
+
+AI Agent Security Architecture and Hardening
+
+MCP (Model Context Protocol) Security 
+
+Agentic Identity and Trust-Boundary Test and Design
+
+Coding-Agent Manipulation and Supply-Chain Threats
+
+Agentic AI Security Architecture for Complex Toolchains
+
+Red Multi-Agent System Automation & Real-World Simulation
+
+Orchestrated Cyber-Attack Simulations Emulating State and Criminal Syndicates 
+
+Usage of RAG-Agents to Productionize Exploit Creation
+ 

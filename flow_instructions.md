@@ -1,12 +1,12 @@
-# Development Flow: LLM-Assisted Graph of Agents Design
+# Development Flow: Spanner-Hosted Graph of Agents
 
 ## Overview
 
-This document outlines the two-phase development workflow for creating Hierarchical Multi-Agent Systems (HMAS) using the Graph of Agents framework.
+This document outlines the two-phase development workflow for creating Hierarchical Multi-Agent Systems (HMAS) where the agent graph is hosted and managed in Google Cloud Spanner.
 
 **Workflow Phases:**
-1. **Design Phase:** Use an LLM with specialized prompts to design the agent graph
-2. **Implementation Phase:** Convert the LLM-generated graph into executable ADK/A2A code
+1.  **Design Phase:** Use an LLM with specialized prompts to design the agent graph.
+2.  **Implementation Phase:** Model and implement the LLM-generated graph in Spanner, with a central orchestrator to drive execution.
 
 ## Phase 1: Design with LLM
 
@@ -14,7 +14,7 @@ This document outlines the two-phase development workflow for creating Hierarchi
 
 Leverage an LLM to architect a multi-agent system as a directed graph, identifying:
 - Required agent types and their specializations
-- Hierarchical relationships between agents
+- Hierarchical relationships and delegation pathways
 - Control flow patterns (sequential, parallel, iterative)
 - State management requirements
 - Task decomposition strategy
@@ -26,302 +26,248 @@ Leverage an LLM to architect a multi-agent system as a directed graph, identifyi
 Use a structured prompt that includes:
 
 ```markdown
-You are an expert in multi-agent system design. Design a Graph of Agents 
-architecture for the following problem:
+You are an expert in distributed, database-driven multi-agent system design. Design a Graph of Agents architecture for the following problem, assuming the graph will be stored and orchestrated from a Spanner database:
 
 [PROBLEM DESCRIPTION]
 
 Your design should specify:
-1. **Agent Nodes:** List each agent with its:
-   - Name and role
-   - Type (LLM Agent, Custom Agent, or Distributed Node)
-   - Specialization and responsibilities
-   - Required capabilities/tools
+1.  **Agent Nodes:** List each agent with its:
+    -   `agent_id` (a unique identifier)
+    -   Name and role
+    -   Type (e.g., LLM-based, Tool-based, Human-in-the-loop)
+    -   Specialization and responsibilities (which can be used as instructions/prompts)
 
-2. **Graph Structure:** Define the hierarchy:
-   - Parent-child relationships
-   - Sub-agent groupings
-   - Delegation pathways
+2.  **Graph Structure:** Define the hierarchy and data flow:
+    -   Parent-child relationships (e.g., `agent_A` delegates to `agent_B` and `agent_C`)
+    -   Control flow (e.g., `agent_B` must complete before `agent_C` starts)
 
-3. **Control Flow:** Specify orchestration patterns:
-   - Sequential pipelines (use SequentialAgent)
-   - Parallel execution (use ParallelAgent)
-   - Iterative refinement (use LoopAgent)
-   - Dynamic delegation points
+3.  **State Management:**
+    -   Key state variables to track per session
+    -   How state is passed between agents (e.g., which outputs from one agent become inputs for another)
 
-4. **State Management:**
-   - Key state variables to track
-   - How state flows between agents
-   - Output keys for each agent
+4.  **Termination Conditions:**
+    -   Success criteria for the overall graph
+    -   Conditions for retries or escalations
 
-5. **Termination Conditions:**
-   - Success criteria for loops
-   - Escalation conditions
-   - Failure handling
-
-Provide the design in a structured format ready for code implementation.
+Provide the design in a structured format ready for database schema implementation.
 ```
 
 #### Step 2: Refine the Design
 
 Iterate with the LLM to:
-- Clarify ambiguous responsibilities
-- Optimize the graph structure for efficiency
-- Identify potential bottlenecks or failure points
-- Ensure proper error handling and fallback strategies
+- Clarify ambiguous responsibilities.
+- Optimize the graph for efficient database-driven execution.
+- Identify potential race conditions or deadlocks.
+- Ensure robust error handling and fallback strategies.
 
 #### Step 3: Document the Graph
 
-Request a visual representation:
-- Mermaid diagram of the agent hierarchy
-- ASCII tree structure
-- Table of agent specifications
+Request a visual representation and a data-oriented summary:
+- Mermaid diagram of the agent hierarchy.
+- A list of agents and their relationships in a format that maps directly to database tables.
 
 ### Example Design Output
 
 The LLM should produce output similar to:
 
 ```
-Graph Structure:
-================
+Agent Definitions:
+==================
+- agent_id: 'planner_001', role: 'Plan generation agent'
+- agent_id: 'executor_001', role: 'Executes a single step of a plan'
+- agent_id: 'evaluator_001', role: 'Evaluates the output of the executor'
+- agent_id: 'reporter_001', role: 'Generates the final report'
 
-RootAgent (SequentialAgent)
-├── PlannerAgent (LLM)
-├── ExecutionLoop (LoopAgent)
-│   ├── TaskExecutor (LLM)
-│   ├── TestRunner (Custom)
-│   └── QualityEvaluator (LLM) [escalates on success]
-└── ReportGenerator (LLM)
+Graph Relationships (Parent, Child, Type):
+=========================================
+- ('root', 'planner_001', 'SEQUENTIAL_NEXT')
+- ('planner_001', 'executor_001', 'ITERATIVE_START')
+- ('executor_001', 'evaluator_001', 'SEQUENTIAL_NEXT')
+- ('evaluator_001', 'executor_001', 'ITERATIVE_LOOP')
+- ('evaluator_001', 'reporter_001', 'ITERATIVE_EXIT')
 
 State Flow:
-- PlannerAgent writes to: session.state['plan']
-- TaskExecutor reads: session.state['plan'], writes: session.state['implementation']
-- TestRunner reads: session.state['implementation'], writes: session.state['test_results']
-- QualityEvaluator reads: session.state['test_results'], escalates if pass_rate > 0.95
+- `planner_001` writes to: `session.state['plan']`
+- `executor_001` reads: `session.state['plan']`, writes: `session.state['implementation_step']`
+- `evaluator_001` reads: `session.state['implementation_step']`, decides whether to loop back to `executor_001` or exit to `reporter_001`.
 ```
 
-## Phase 2: Convert to ADK/A2A Code
+## Phase 2: Implement with Spanner
 
 ### Objective
 
-Transform the LLM-designed graph into working Python code using the ADK/A2A framework.
+Transform the LLM-designed graph into a robust, scalable system using Spanner as the backend for storing the graph, tasks, and state.
+
+### Spanner Schema Design
+
+Define Spanner tables to represent the system.
+
+**1. `Agents` Table:** Stores the definition of each agent node.
+```sql
+CREATE TABLE Agents (
+    AgentId        STRING(36) NOT NULL,
+    Name           STRING(1024),
+    Role           STRING(MAX),
+    Instructions   STRING(MAX), -- The agent's system prompt or operational instructions
+    AgentType      STRING(100), -- e.g., 'LLM', 'TOOL'
+    -- Other metadata
+) PRIMARY KEY (AgentId);
+```
+
+**2. `AgentRelationships` Table:** Defines the graph edges and control flow.
+```sql
+CREATE TABLE AgentRelationships (
+    ParentAgentId  STRING(36) NOT NULL,
+    ChildAgentId   STRING(36) NOT NULL,
+    RelationshipType STRING(100), -- e.g., 'SEQUENTIAL', 'PARALLEL', 'ITERATIVE_LOOP'
+    ExecutionOrder INT64,       -- For ordering sequential/parallel tasks
+) PRIMARY KEY (ParentAgentId, ChildAgentId);
+```
+
+**3. `Tasks` Table:** Manages the lifecycle of tasks executed by agents.
+```sql
+CREATE TABLE Tasks (
+    TaskId         STRING(36) NOT NULL,
+    SessionId      STRING(36) NOT NULL,
+    AssignedAgentId STRING(36) NOT NULL,
+    Status         STRING(50) NOT NULL, -- e.g., 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'FAILED'
+    InputPayload   JSON,
+    OutputResult   JSON,
+    CreatedAt      TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp=true),
+    UpdatedAt      TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp=true),
+) PRIMARY KEY (SessionId, TaskId);
+```
+
+**4. `SessionState` Table:** Holds the shared state for a given execution graph.
+```sql
+CREATE TABLE SessionState (
+    SessionId      STRING(36) NOT NULL,
+    StateKey       STRING(256) NOT NULL,
+    StateValue     JSON,
+    UpdatedAt      TIMESTAMP NOT NULL OPTIONS (allow_commit_timestamp=true),
+) PRIMARY KEY (SessionId, StateKey);
+```
 
 ### Implementation Guidelines
 
-#### 1. Define Individual Agents
+#### 1. The Orchestrator
 
-Start from the leaf nodes (agents with no sub-agents) and work upward:
+The core of the system is an orchestrator service that drives the execution.
+- **Starts a Session:** Creates a new `SessionId`.
+- **Reads the Graph:** Queries `AgentRelationships` to understand the workflow.
+- **Manages Tasks:**
+    - Creates the initial task(s) in the `Tasks` table for the root agent(s).
+    - Continuously polls the `Tasks` table for `COMPLETED` tasks.
+    - When a task is complete, it determines the next agent(s) from `AgentRelationships`.
+    - It prepares the `InputPayload` for the next tasks using data from `SessionState` or the previous task's `OutputResult`.
+    - It creates new `PENDING` tasks for the next agent(s).
+- **Manages State:** Reads and writes to the `SessionState` table as needed.
 
+#### 2. The Agent Workers
+
+Each agent is an independent, stateless worker process/service.
+- **Polls for Tasks:** Periodically queries the `Tasks` table for `PENDING` tasks with its `AgentId`.
+- **Executes Work:**
+    - On finding a task, it updates the status to `IN_PROGRESS`.
+    - It performs its function (e.g., calls an LLM, runs a tool) using the `InputPayload`.
+    - It updates the task in Spanner with the `OutputResult` and sets the status to `COMPLETED` or `FAILED`.
+- **Is Stateless:** All necessary information comes from the task's `InputPayload`. All results are written back. This allows for easy scaling and fault tolerance.
+
+### Code Example (Python with `google-cloud-spanner`)
+
+**Agent Worker Logic:**
 ```python
-from adk import LlmAgent, BaseAgent
-from typing import Dict, Any
+from google.cloud import spanner
+import time
+import json
 
-# Leaf agent example
-planner_agent = LlmAgent(
-    name="planner",
-    model="gpt-4",
-    instructions="""You are a planning specialist...
-    Output your plan to session.state['plan'].""",
-    output_key="plan"  # Automatically saves to session.state
-)
+AGENT_ID = "executor_001"
 
-# Custom agent example
-class TestRunner(BaseAgent):
-    async def run(self, ctx: InvocationContext) -> Event:
-        implementation = ctx.session.state.get('implementation')
-        # Run tests on implementation
-        test_results = await self._execute_tests(implementation)
-        ctx.session.state['test_results'] = test_results
-        return Event(message="Tests completed")
-```
+def process_task(task_data):
+    # Business logic for the agent
+    print(f"Executing task: {task_data['TaskId']}")
+    # ... call LLM, run tool, etc. ...
+    input_payload = json.loads(task_data['InputPayload'])
+    result = {"status": "success", "detail": f"Processed plan: {input_payload.get('plan')}"}
+    return json.dumps(result)
 
-#### 2. Build Workflow Agents
+def agent_worker_loop():
+    spanner_client = spanner.Client()
+    instance = spanner_client.instance("my-instance")
+    database = instance.database("my-database")
 
-Compose agents according to the designed control flow:
-
-```python
-from adk import SequentialAgent, LoopAgent, ParallelAgent
-
-# Sequential pipeline
-sequential_flow = SequentialAgent(
-    name="sequential_flow",
-    sub_agents=[agent1, agent2, agent3]
-)
-
-# Iterative refinement with termination
-iterative_flow = LoopAgent(
-    name="execution_loop",
-    sub_agents=[executor, tester, evaluator],
-    max_iterations=20
-)
-
-# Parallel execution
-parallel_flow = ParallelAgent(
-    name="parallel_research",
-    sub_agents=[web_search, db_query, api_call]
-)
-```
-
-#### 3. Implement Termination Logic
-
-Ensure evaluator agents can signal completion:
-
-```python
-class QualityEvaluator(LlmAgent):
-    async def run(self, ctx: InvocationContext) -> Event:
-        test_results = ctx.session.state.get('test_results')
-        
-        # Use LLM to evaluate quality
-        evaluation = await self._evaluate(test_results)
-        
-        if evaluation['pass_rate'] > 0.95:
-            return Event(
-                message="Quality standards met",
-                actions=EventActions(escalate=True)  # Terminates LoopAgent
+    while True:
+        with database.snapshot() as snapshot:
+            # Find a pending task
+            results = snapshot.execute_sql(
+                "SELECT * FROM Tasks WHERE AssignedAgentId = @agent_id AND Status = 'PENDING' LIMIT 1",
+                params={"agent_id": AGENT_ID},
+                param_types={"agent_id": spanner.param_types.STRING},
             )
+            task = next(results, None)
+
+        if task:
+            session_id, task_id = task.SessionId, task.TaskId
+            
+            def update_task_transaction(transaction):
+                # Set to IN_PROGRESS
+                transaction.update(
+                    table="Tasks",
+                    columns=["SessionId", "TaskId", "Status"],
+                    values=[[session_id, task_id, "IN_PROGRESS"]],
+                )
+            database.run_in_transaction(update_task_transaction)
+
+            # Execute and save result
+            output_result = process_task(task)
+            
+            def finalize_task_transaction(transaction):
+                transaction.update(
+                    table="Tasks",
+                    columns=["SessionId", "TaskId", "Status", "OutputResult"],
+                    values=[[session_id, task_id, "COMPLETED", output_result]],
+                )
+            database.run_in_transaction(finalize_task_transaction)
         else:
-            return Event(
-                message=f"Quality insufficient: {evaluation['feedback']}"
-            )
-```
-
-#### 4. Assemble the Complete Graph
-
-Build the hierarchy from bottom-up:
-
-```python
-# Assemble the full graph
-root_agent = SequentialAgent(
-    name="root_workflow",
-    sub_agents=[
-        planner_agent,
-        LoopAgent(
-            name="execution_loop",
-            sub_agents=[task_executor, test_runner, quality_evaluator],
-            max_iterations=20
-        ),
-        report_generator
-    ]
-)
-```
-
-#### 5. Configure Ray for Distribution (Optional)
-
-For distributed execution:
-
-```python
-import ray
-from adk.ray import RayActorAgent
-
-ray.init()
-
-# Convert agents to Ray Actors for stateful, distributed execution
-distributed_executor = RayActorAgent(
-    agent=task_executor,
-    max_restarts=3,
-    max_task_retries=2
-)
+            time.sleep(5) # Wait before polling again
 ```
 
 ### Code Organization
 
-Structure your implementation:
-
 ```
 project/
+├── schemas/
+│   └── spanner_schema.sql  # DDL for Spanner tables
+├── orchestrator/
+│   └── main.py             # Main orchestrator service logic
 ├── agents/
 │   ├── __init__.py
-│   ├── planner.py          # PlannerAgent definition
-│   ├── executor.py         # TaskExecutor definition
-│   ├── evaluator.py        # QualityEvaluator definition
-│   └── custom_agents.py    # Custom BaseAgent implementations
-├── workflows/
-│   ├── __init__.py
-│   └── main_workflow.py    # Root graph assembly
-├── config/
-│   ├── prompts.py          # Agent instruction templates
-│   └── models.py           # Model configurations
-└── main.py                 # Entry point
+│   ├── planner_agent.py    # Worker for the planner agent
+│   └── executor_agent.py   # Worker for the executor agent
+├── common/
+│   └── db.py               # Spanner client and helper functions
+└── main.py                 # Entry point to start services
 ```
 
 ## Validation Checklist
 
-After implementation, verify:
-
-- [ ] All agents from the design are implemented
-- [ ] Hierarchical relationships match the designed graph
-- [ ] State keys are consistently named and accessed
-- [ ] Termination conditions are properly implemented
-- [ ] Error handling covers failure scenarios
-- [ ] Output keys are configured for pipeline agents
-- [ ] Loop agents have reasonable max_iterations
-- [ ] Distributed agents have fault tolerance configured
-- [ ] Integration tests cover the full workflow
-
-## Best Practices
-
-### During Design Phase
-
-1. **Be Specific:** Provide detailed problem context to the LLM
-2. **Iterate:** Refine the design through multiple rounds
-3. **Visualize:** Always request a graph diagram
-4. **Document Assumptions:** Capture any assumptions made during design
-
-### During Implementation Phase
-
-1. **Start Simple:** Implement a minimal version first
-2. **Test Incrementally:** Verify each agent independently before composition
-3. **Use Type Hints:** Leverage Python typing for better code quality
-4. **Log State Changes:** Add logging for debugging state flow
-5. **Handle Edge Cases:** Consider failure modes and add fallbacks
-
-## Example: End-to-End Workflow
-
-```python
-# 1. Design with LLM (get the graph structure)
-# 2. Implement agents
-from agents import PlannerAgent, TaskExecutor, QualityEvaluator, ReportGenerator
-
-# 3. Assemble workflow
-workflow = SequentialAgent(
-    name="code_generation_workflow",
-    sub_agents=[
-        PlannerAgent(name="planner"),
-        LoopAgent(
-            name="dev_loop",
-            sub_agents=[
-                TaskExecutor(name="executor"),
-                QualityEvaluator(name="evaluator")
-            ],
-            max_iterations=10
-        ),
-        ReportGenerator(name="reporter")
-    ]
-)
-
-# 4. Execute
-result = await workflow.invoke(
-    context={"task": "Build a REST API for user management"}
-)
-```
+- [ ] Spanner schema is created and indexes are in place for performance.
+- [ ] All agents from the design have a corresponding worker implementation.
+- [ ] The orchestrator correctly traverses the graph based on `AgentRelationships`.
+- [ ] State is correctly passed between tasks via `SessionState` and `InputPayload`/`OutputResult`.
+- [ ] Termination and loop conditions are correctly handled by the orchestrator.
+- [ ] Agent workers are fault-tolerant and can recover from transient errors.
+- [ ] Integration tests verify a full session runs from start to finish.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Loop never terminates | Verify evaluator returns `escalate=True` on success |
-| State not flowing | Check `output_key` configuration and state key names |
-| Agents executing in wrong order | Review SequentialAgent sub_agents list order |
-| Parallel agents conflicting | Ensure agents write to distinct state keys |
-| Ray actors failing | Check `max_restarts` and `max_task_retries` configuration |
-
-## Next Steps
-
-- Review [Graph of Agents README](./README.md) for architectural concepts
-- Explore example implementations in `/examples`
-- Join discussions on design patterns and best practices
-- Contribute your graph designs to the community repository
+| Orchestrator doesn't create next task | Check the `RelationshipType` logic and ensure the previous task status is `COMPLETED`. |
+| Agent processes the same task twice | Ensure the agent's transaction correctly sets the task status to `IN_PROGRESS` immediately after selection. Use Spanner's strong consistency. |
+| State not flowing correctly | Verify the orchestrator is correctly mapping `OutputResult` and `SessionState` to the next task's `InputPayload`. Check for JSON serialization issues. |
+| Deadlock in database | Analyze transactions for long-running operations. Ensure workers only hold locks for short periods when updating task status. |
 
 ---
 
-**Remember:** The LLM is your design partner, but you are the engineer who ensures correctness, efficiency, and maintainability of the implementation.
+**Remember:** This paradigm shifts complexity from a stateful application framework to a stateless, database-driven architecture. The LLM is your design partner, and you are the engineer who ensures the data models, transactions, and services are correct, scalable, and maintainable.

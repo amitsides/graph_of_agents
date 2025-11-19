@@ -1,0 +1,20 @@
+from google.adk.agents.parallel_agent import ParallelAgent
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents.sequential_agent import SequentialAgent
+from google.adk.tools import google_search
+
+MODEL = "gemini-2.0-flash"
+
+# Parallel sub-agents
+agent_1 = LlmAgent(name="Agent1", model=MODEL, instruction="Task 1", tools=[google_search], output_key="result_1")
+agent_2 = LlmAgent(name="Agent2", model=MODEL, instruction="Task 2", tools=[google_search], output_key="result_2")
+agent_3 = LlmAgent(name="Agent3", model=MODEL, instruction="Task 3", tools=[google_search], output_key="result_3")
+
+# Parallel execution
+parallel_agent = ParallelAgent(name="ParallelAgent", sub_agents=[agent_1, agent_2, agent_3])
+
+# Merger agent
+merger_agent = LlmAgent(name="Merger", model=MODEL, instruction="Combine {result_1}, {result_2}, {result_3}")
+
+# Pipeline
+pipeline = SequentialAgent(name="Pipeline", sub_agents=[parallel_agent, merger_agent])
