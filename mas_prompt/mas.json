@@ -1,0 +1,82 @@
+[
+  {
+    "Type": "Ransomware",
+    "What_It_Does": "Disables victim's access to data until ransom is paid",
+    "Real_World_Example": "RYUK"
+  },
+  {
+    "Type": "Fileless Malware",
+    "What_It_Does": "Makes changes to files that are native to the OS",
+    "Real_World_Example": "Astaroth"
+  },
+  {
+    "Type": "Spyware",
+    "What_It_Does": "Collects user activity data without their knowledge",
+    "Real_World_Example": "DarkHotel"
+  },
+  {
+    "Type": "Adware",
+    "What_It_Does": "Serves unwanted advertisements",
+    "Real_World_Example": "Fireball"
+  },
+  {
+    "Type": "Trojans",
+    "What_It_Does": "Disguises itself as desirable code",
+    "Real_World_Example": "Emotet"
+  },
+  {
+    "Type": "Worms",
+    "What_It_Does": "Spreads through a network by replicating itself",
+    "Real_World_Example": "Stuxnet"
+  },
+  {
+    "Type": "Rootkits",
+    "What_It_Does": "Gives hackers remote control of a victim's device",
+    "Real_World_Example": "Zacinlo"
+  },
+  {
+    "Type": "Keyloggers",
+    "What_It_Does": "Monitors users' keystrokes",
+    "Real_World_Example": "Olympic Vision"
+  },
+  {
+    "Type": "Bots",
+    "What_It_Does": "Launches a broad flood of attacks",
+    "Real_World_Example": "Echobot"
+  },
+  {
+    "Type": "Mobile Malware",
+    "What_It_Does": "Infects mobile devices",
+    "Real_World_Example": "Triada"
+  },
+  {
+    "Type": "Metamorphic & Polymorphic Malware Generation Analysis",
+    "What_It_Does": "Analyzes malware that changes its code structure (metamorphic) or encrypts itself (polymorphic) to evade detection",
+    "Real_World_Example": "W32/Simile (Metamorphic), CryptoLocker (Polymorphic)"
+  },
+  {
+    "Type": "Shellcode GenAI and Automated Disassembly GenAI",
+    "What_It_Does": "Uses AI to generate, analyze, and automatically disassemble shellcode and malware payloads",
+    "Real_World_Example": "Deep learning-powered shellcode generators"
+  },
+  {
+    "Type": "Malicious Payload Design Assessment",
+    "What_It_Does": "Evaluates the structure and impact of various types of harmful payloads including viruses, worms, trojans, and ransomware",
+    "Real_World_Example": "Analysis of Slammer (Worm), ILOVEYOU (Virus), Zeus (Trojan), REvil (Ransomware)"
+  },
+  {
+    "Type": "Data Exfiltration Pattern Analysis",
+    "What_It_Does": "Examines mechanisms and tactics used to secretly transfer data out of an organization",
+    "Real_World_Example": "APT10 Cloud Hopper campaign"
+  },
+  {
+    "Type": "Spyware, Rootkits, Keyloggers, Backdoors, Botnets, Cryptominers",
+    "What_It_Does": "Detection, classification, and behavior analysis of common and blended persistent threats",
+    "Real_World_Example": "Mirai (Botnet), TrickBot (Backdoor/Botnet), CoinHive (Cryptominer)"
+  },
+  {
+    "Type": "Ransomware and Extortion-Chain Modeling",
+    "What_It_Does": "Models the stages and tactics of modern ransomware and extortion attacks, including double-extortion and data leak tactics",
+    "Real_World_Example": "Maze ransomware double extortion strategy"
+  }
+]
