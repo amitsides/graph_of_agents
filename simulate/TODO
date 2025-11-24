@@ -1,0 +1,61 @@
+1. Dynamic Binary Instrumentation (DBI) for runtime
+
+Pin, DynamoRIO, Valgrind, Frida-Gum, QBDI.
+
+2. Disassembler for reverse engineering
+
+IDA, Ghidra, Radare2, Hopper.
+
+3. Static Code Analysis
+
+Semgrep, SonarQube, Clang Static Analyzer, CodeQL.
+
+
+4. Dynamic Debugging & Breakpoint Frameworks
+
+GDB, WinDbg, LLDB — step execution, stack inspection, breakpoints.
+
+5. Full-System / OS-Level Emulation
+
+QEMU/KVM, Bochs — emulate CPU, devices, kernel interactions.
+
+6. Taint Analysis Engines
+
+Triton, Angr, Pharos — track attacker-controlled data flows through execution.
+
+7. Symbolic Execution / Constraint Solvers
+
+Z3, Angr, S2E — explore execution paths via symbolic inputs.
+
+8. Fuzzing Frameworks (Coverage-Guided / Mutation)
+
+AFL++, libFuzzer, Honggfuzz, Syzkaller (kernel), Peach.
+
+9. Runtime Profiling & Performance Instrumentation
+
+perf, eBPF, SystemTap, strace, dtrace — monitor syscalls, CPU events, memory.
+
+10. Memory Forensics & Dump Analysis
+
+Volatility, Rekall — analyze heap, stack, artifacts in memory snapshots.
+
+11. Network Traffic Capture & Protocol Analysis
+
+Wireshark, tcpdump, Zeek — inspect network flows interacting with the process.
+
+12. Malware Sandbox / Behavior Analysis Systems
+
+Cuckoo Sandbox, CAPE, GFI — observe behavior in controlled VM environments.
+
+13. Binary Diffing & Patch Diffing Tools
+
+BinDiff, Diaphora, DarunGrim — compare versions to detect vulnerabilities and patch impacts.
+
+14. Compiler-Based Instrumentation
+
+AddressSanitizer, MemorySanitizer, UBSan — detect memory corruption at compile-time.
+
+15. Containerized / Virtualized Replay & Snapshot Tools
+
+Firecracker, CRIU, Reverie — reproduce workloads, checkpoint/restore execution.
+

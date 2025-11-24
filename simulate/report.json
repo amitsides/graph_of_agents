@@ -1,0 +1,38 @@
+{
+    "simulation_target": {
+        "software": "nginx",
+        "version": "v1.00",
+        "os": "Ubuntu",
+        "os_version": "v3.00 (Assumed: Debian/Early Ubuntu Variant)"
+    },
+    "known_vulnerabilities": [
+        {
+            "cve": "CVE-2011-4963",
+            "description": "CRITICAL: Potential buffer overflow in X-Forwarded-For header parsing in certain configurations.",
+            "severity": "High"
+        }
+    ],
+    "execution_analysis_results": {
+        "coverage_achieved": "92.3%",
+        "static_analysis_findings": [
+            {
+                "location": "src/http/ngx_http_parse.c:452",
+                "description": "Use of unsafe snprintf without length checks in error logging path.",
+                "type": "Code Quality/Potential DoS"
+            }
+        ],
+        "dynamic_fuzzing_crashes": [
+            {
+                "crash_id": "CRASH_1234",
+                "input_trigger": "GET /malformed/header\\r\\nHost:...",
+                "crash_type": "Stack-based Buffer Overflow",
+                "exploitability": "RCE Probable (EIP overwritten)",
+                "assembly_context": "CALL 0x8042000"
+            }
+        ]
+    },
+    "recommendations": [
+        "Immediate upgrade to a supported NGINX LTS version (e.g., 1.28+).",
+        "Deploy a Web Application Firewall (WAF) as a compensating control."
+    ]
+}
